@@ -1,0 +1,35 @@
+# Özge ♥ Batuhan — Gün Hatırlatıcısı
+
+Bu proje, iPhone ana ekranına eklenen web uygulamasıdır. Saat başı bildirimi Netlify Scheduled Function sunucudan yollar; sayfanın açık kalması gerekmez.
+
+## Kurulum (bir kez)
+
+1. Bu ZIP'i bilgisayarda aç.
+2. Klasörün tamamını GitHub'da yeni bir depoya (repository) yükle. Depo özel/private olabilir.
+3. Netlify'de **Add new project → Import an existing project → GitHub** ile bu depoyu bağla ve yayımla. Sadece Netlify Drop kullanma; saatlik sunucu fonksiyonu için Git bağlantılı dağıtım gerekir.
+4. Netlify proje sayfasında **Functions** bölümünde `hourly-reminder` fonksiyonunun Scheduled olarak göründüğünü kontrol et. Scheduled Functions yayımlanmış dağıtımda çalışır.
+5. iPhone 17'de Safari ile yayımlanan siteni aç. **Paylaş → Ana Ekrana Ekle → Ekle**.
+6. Ana ekrana gelen **ÖB Gün** simgesini aç ve **Saatlik bildirimleri aç** düğmesine bas. Bildirim izninde **İzin Ver** seç.
+
+## Nasıl çalışır?
+
+- İlk kez bildirim izni verildiğinde sunucu VAPID anahtarlarını kendisi oluşturup Netlify Blobs'ta saklar; ayrıca anahtar üretmen veya gizli anahtar kopyalaman gerekmez.
+- iPhone'un push aboneliği sunucuya kaydedilir.
+- Netlify Scheduled Function her saat başı (UTC) çalışır ve Türkiye saat dilimindeki gün adını push bildirimi olarak gönderir.
+- İstanbul UTC+3 olduğundan saatlik tetikleme Türkiye'de de her saat başına denk gelir.
+
+## iPhone notları
+
+- iOS/iPadOS 16.4 veya sonrası gerekir. iPhone 17 bu özelliği destekler.
+- Web push için site önce Ana Ekrana eklenmeli; bildirim izni uygulamanın içindeki düğmeye dokununca istenir.
+- İlk bildirim, abonelik tamamlandıktan sonraki ilk saatlik çalışmada gelir.
+- Bildirimlerin teslimi Apple'ın push altyapısına, internet bağlantısına ve iOS bildirim ayarlarına bağlıdır; kesin teslim saati garanti edilemez.
+- Bildirimleri kapatmak için iPhone **Ayarlar → Bildirimler → ÖB Gün** bölümünü kullanabilir veya ana ekrandaki uygulamayı silebilirsin.
+
+## Dosyalar
+
+- `index.html`: papatyalı uygulama arayüzü
+- `manifest.json`: ana ekrana ekleme bilgileri
+- `sw.js`: push bildirimlerini alan service worker
+- `netlify/functions/`: abonelik kaydı, VAPID public key ve saatlik gönderim fonksiyonları
+- `netlify.toml`, `package.json`: Netlify yapılandırması ve bağımlılıklar
