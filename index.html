@@ -1,54 +1,69 @@
-<!doctype html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff8ed">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="ÖB Gün">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icon-180.png">
-<title>Özge ♥ Batuhan — Gün Hatırlatıcısı</title>
-<style>
-:root{--cream:#fff8ed;--green:#718b64;--pink:#a66c7a;--ink:#554b46;--yellow:#f5c94e}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 10%,#fff 0,#fff8ed 58%,#f9e9e2 100%);color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;overflow-x:hidden}
-main{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:175px 22px 52px;position:relative}
-h1{font-size:clamp(2rem,8vw,3.5rem);margin:0 0 8px;color:var(--pink)}.logo{font-size:clamp(1.2rem,4vw,1.5rem);font-weight:850;color:#8b6570;margin-bottom:25px}.logo span{color:#d7798b}
-.tag{font-size:.82rem;letter-spacing:.22em;text-transform:uppercase;color:#9a8b7e;margin-bottom:12px}
-.day{font-size:clamp(2.6rem,10vw,4.8rem);font-weight:900;line-height:1.05;color:var(--green);margin:8px 0}
-.date{font-size:1.05rem;color:#9b8b7f;margin:8px 0 28px}.note{font-size:1.05rem;line-height:1.6;max-width:330px;margin:0 auto 26px}
-button{border:0;border-radius:999px;padding:14px 22px;background:#78936e;color:white;font-weight:800;font-size:1rem;box-shadow:0 6px 18px #78936e33;cursor:pointer}
-button:disabled{opacity:.65}.status{font-size:.82rem;color:#98877c;margin-top:13px;max-width:330px;line-height:1.5;min-height:2.4em}
-footer{position:absolute;bottom:16px;font-size:.75rem;color:#b09d91}
-.flower-row{position:absolute;top:0;left:0;width:100%;height:190px;display:flex;justify-content:space-around;pointer-events:none;overflow:hidden}
-.hanger{position:relative;width:18%;height:180px;transform-origin:top center;animation:sway 4s ease-in-out infinite}
-.hanger:nth-child(2n){animation-delay:-1.7s}.hanger:nth-child(3n){animation-delay:-.8s}
-.stem{position:absolute;top:0;left:50%;height:112px;width:2px;background:#79966e;border-radius:2px}
-.flower{position:absolute;top:104px;left:50%;width:38px;height:38px;transform:translateX(-50%)}
-.petal{position:absolute;width:13px;height:21px;left:12px;top:0;background:#fff;border:1px solid #eee8dd;border-radius:60% 60% 45% 45%;transform-origin:6.5px 19px}
-.petal:nth-child(1){transform:rotate(0deg) translateY(-8px)}.petal:nth-child(2){transform:rotate(45deg) translateY(-8px)}.petal:nth-child(3){transform:rotate(90deg) translateY(-8px)}.petal:nth-child(4){transform:rotate(135deg) translateY(-8px)}.petal:nth-child(5){transform:rotate(180deg) translateY(-8px)}.petal:nth-child(6){transform:rotate(225deg) translateY(-8px)}.petal:nth-child(7){transform:rotate(270deg) translateY(-8px)}.petal:nth-child(8){transform:rotate(315deg) translateY(-8px)}
-.center{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--yellow);left:12px;top:12px;box-shadow:inset 0 1px 2px #d7a52d}
-.leaf{position:absolute;top:63px;left:50%;width:18px;height:9px;background:#91a982;border-radius:100% 0 100% 0;transform:rotate(-28deg)}
-.hanger:nth-child(even) .leaf{transform:rotate(205deg);left:35%}
-@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
-@media(min-width:650px){.flower-row{height:220px}.hanger{height:205px}.stem{height:135px}.flower{top:127px}}
-@media(prefers-reduced-motion:reduce){.hanger{animation:none}}
-</style>
-</head>
-<body>
-<div class="flower-row" aria-hidden="true">
 <script>
-for(let i=0;i<6;i++){document.write('<div class="hanger"><i class="stem"></i><i class="leaf"></i><div class="flower">'+Array.from({length:8},()=>'<i class="petal"></i>').join('')+'<i class="center"></i></div></div>')}
+const dayEl=document.getElementById('day'),dateEl=document.getElementById('date'),statusEl=document.getElementById('status');
+const weekday=new Intl.DateTimeFormat('tr-TR',{weekday:'long',timeZone:'Europe/Istanbul'});
+const dateFmt=new Intl.DateTimeFormat('tr-TR',{day:'numeric',month:'long',year:'numeric',timeZone:'Europe/Istanbul'});
+function update(){const n=new Date();dayEl.textContent=weekday.format(n).toLocaleUpperCase('tr-TR');dateEl.textContent=dateFmt.format(n)}update();setInterval(update,60000);
+
+function urlB64ToUint8Array(base64){const padding='='.repeat((4-base64.length%4)%4);const raw=atob((base64+padding).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))}
+function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('enable');
+  if(!btn) return;
+
+  btn.addEventListener('click', async () => {
+    if(!isStandalone()){
+      statusEl.textContent='Önce Safari’de Paylaş → Ana Ekrana Ekle. Sonra ana ekrandaki ÖB simgesini açıp tekrar dene.';
+      return;
+    }
+    if(!('serviceWorker' in navigator)||!'PushManager' in window||!'Notification' in window){
+      statusEl.textContent='Bu cihaz/tarayıcı web bildirimlerini desteklemiyor.';
+      return;
+    }
+
+    btn.disabled = true;
+    statusEl.textContent = 'Bildirim izni isteniyor…';
+
+    try {
+      const permission = await Notification.requestPermission();
+      if(permission !== 'granted'){
+        statusEl.textContent = 'Bildirim izni verilmedi. iPhone Ayarlar > Bildirimler bölümünden siteye izin ver.';
+        btn.disabled = false;
+        return;
+      }
+
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      await navigator.serviceWorker.ready;
+
+      const keyResponse = await fetch('/.netlify/functions/vapid-public-key');
+      if(!keyResponse.ok) throw new Error('Sunucu anahtarı alınamadı');
+      
+      const {publicKey} = await keyResponse.json();
+      let sub = await reg.pushManager.getSubscription();
+      if(!sub){
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlB64ToUint8Array(publicKey)
+        });
+      }
+
+      const saved = await fetch('/.netlify/functions/subscribe', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(sub)
+      });
+      if(!saved.ok) throw new Error('Abonelik kaydedilemedi');
+
+      statusEl.textContent = 'Bildirimler açıldı! 🌼 Her saat başı günün adı gelecek.';
+    } catch(e) {
+      console.error(e);
+      statusEl.textContent = 'Kurulum tamamlanamadı. İnternet bağlantını kontrol edip tekrar dene.';
+      btn.disabled = false;
+    }
+  });
+});
+
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
 </script>
-</div>
-<main>
-<div class="logo">Özge <span>♥</span> Batuhan</div>
-<div class="tag">birlikte her gün güzel</div>
-<h1>Bugün günlerden</h1>
-<div class="day" id="day">—</div>
-<div class="date" id="date"></div>
-<p class="note">🌼 Küçük bir hatırlatma:<br><strong>Bugün de güzel bir gün.</strong><br>Özge ♥ Batuhan</p>
-<button id="enable">Saatlik bildirimleri aç</button>
-<div class="status" id="status" aria-live="polite">Önce bu siteyi iPhone ana ekranına ekle, sonra bildirimleri aç.</div>
-<footer>ÖB • sev
