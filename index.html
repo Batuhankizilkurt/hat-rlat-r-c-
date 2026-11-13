@@ -51,36 +51,4 @@ for(let i=0;i<6;i++){document.write('<div class="hanger"><i class="stem"></i><i 
 <p class="note">🌼 Küçük bir hatırlatma:<br><strong>Bugün de güzel bir gün.</strong><br>Özge ♥ Batuhan</p>
 <button id="enable">Saatlik bildirimleri aç</button>
 <div class="status" id="status" aria-live="polite">Önce bu siteyi iPhone ana ekranına ekle, sonra bildirimleri aç.</div>
-<footer>ÖB • sevgiyle hazırlandı 🌼</footer>
-</main>
-<script>
-const dayEl=document.getElementById('day'),dateEl=document.getElementById('date'),statusEl=document.getElementById('status'),btn=document.getElementById('enable');
-const weekday=new Intl.DateTimeFormat('tr-TR',{weekday:'long',timeZone:'Europe/Istanbul'});
-const dateFmt=new Intl.DateTimeFormat('tr-TR',{day:'numeric',month:'long',year:'numeric',timeZone:'Europe/Istanbul'});
-function update(){const n=new Date();dayEl.textContent=weekday.format(n).toLocaleUpperCase('tr-TR');dateEl.textContent=dateFmt.format(n)}update();setInterval(update,60000);
-function urlB64ToUint8Array(base64){const padding='='.repeat((4-base64.length%4)%4);const raw=atob((base64+padding).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))}
-function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
-async function enablePush(){
- if(!isStandalone()){statusEl.textContent='Önce Safari’de Paylaş → Ana Ekrana Ekle. Sonra ana ekrandaki ÖB simgesini açıp tekrar dene.';return}
- if(!('serviceWorker'in navigator)||!('PushManager'in window)||!('Notification'in window)){statusEl.textContent='Bu cihaz/tarayıcı web bildirimlerini desteklemiyor.';return}
- btn.disabled=true;statusEl.textContent='Bildirim izni isteniyor…';
- try{
-  const permission=await Notification.requestPermission();
-  if(permission!=='granted'){statusEl.textContent='Bildirim izni verilmedi. iPhone Ayarlar > Bildirimler bölümünden siteye izin ver.';return}
-  const reg=await navigator.serviceWorker.register('/sw.js');
-  await navigator.serviceWorker.ready;
-  const keyResponse=await fetch('/api/vapid-public-key');
-  if(!keyResponse.ok)throw new Error('Sunucu anahtarı alınamadı');
-  const {publicKey}=await keyResponse.json();
-  let sub=await reg.pushManager.getSubscription();
-  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64ToUint8Array(publicKey)});
-  const saved=await fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sub)});
-  if(!saved.ok)throw new Error('Abonelik kaydedilemedi');
-  statusEl.textContent='Bildirimler açıldı! 🌼 Her saat başı günün adı gelecek. İlk bildirim bir sonraki saat başında.';
- }catch(e){console.error(e);statusEl.textContent='Kurulum tamamlanamadı. Site Netlify’de yayımlandı mı? İnternet bağlantını kontrol edip tekrar dene.'}
- finally{btn.disabled=false}
-}
-btn.addEventListener('click',enablePush);
-if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
-</script>
-</body></html>
+<footer>ÖB • sev
